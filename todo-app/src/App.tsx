@@ -1,75 +1,26 @@
-import React, { useState } from "react";
-import { Task } from "./models/Task";
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
 
-const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Изучить TypeScript", completed: false },
-    { id: 2, title: "Попрактиковаться с React", completed: true },
-  ]);
-
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [correctedTask, setCorrectedTask] = useState("");
-
-  // ADD NEW TASK
-  const addTask = () => {
-    if (newTaskTitle.trim() === "") return;
-
-    const newTask: Task = {
-      id: tasks.length + 1,
-      title: newTaskTitle,
-      completed: false,
-    };
-
-    setTasks([...tasks, newTask]);
-    setNewTaskTitle("");
-  };
-
-  // CHANGE TASK TITLE
-
-  // DELETE TASK
-  const deleteTask = (id: number) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
-  };
-
-  // COMPLETED CHANGE
-  const toggleTask = (id: number) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
+function App() {
   return (
-    <div>
-      <h2>Create new Task:</h2>
-      <input
-        type="text"
-        value={newTaskTitle}
-        onChange={(e) => setNewTaskTitle(e.target.value)}
-        placeholder="Название задачи"
-      />
-      <button onClick={addTask}>Create</button>
-
-      <h1>Список задач</h1>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <label>
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleTask(task.id)}
-              />
-              {task.title} {task.completed ? "(выполнено)" : "(не выполнено)"}
-              <button onClick={() => deleteTask(task.id)}>Delete</button>
-            </label>
-          </li>
-        ))}
-      </ul>
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
     </div>
   );
-};
+}
 
 export default App;
