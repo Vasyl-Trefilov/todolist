@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Task } from "./taskInterface";
+import { motion } from "framer-motion";
+import { Button, Container, ListGroup, Form } from "react-bootstrap";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -9,7 +11,7 @@ const App: React.FC = () => {
   const [newTaskTitle, setNewTaskTitle] = useState<string>("");
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
-  //FIND ALL
+  // FIND ALL
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -24,10 +26,10 @@ const App: React.FC = () => {
     fetchTasks();
   }, []);
 
-  //CREATE
+  // CREATE
   const handleCreateTask = async () => {
     if (!newTaskTitle) {
-      setError("Название задачи не должно быть пустым");
+      setError("Title can't be empty");
       return;
     }
     try {
@@ -35,49 +37,75 @@ const App: React.FC = () => {
         title: newTaskTitle,
         completed: isCompleted,
       });
-      setTasks((prevtasks) => [...prevtasks, response.data]);
+      setTasks((prevTasks) => [...prevTasks, response.data]);
       setIsCompleted(false);
       setIsCreating(false);
       setNewTaskTitle("");
     } catch (err) {
       console.error(err);
-      setError("Не удалось create задачи");
+      setError("Can't create task");
     }
   };
 
   return (
-    <div>
-      <h1>Список задач</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}{" "}
-      {/* Отображаем ошибку, если есть */}
-      <ul>
-        {tasks.map((task) => (
-          <li key={task._id}>
-            <input type="checkbox" checked={task.completed} readOnly />
-            {task.title}
-          </li>
+    <Container className="mt-4">
+      <h1>Tasks list</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <ListGroup className="mb-4">
+        {tasks.map((task, index) => (
+          <motion.div
+            key={task._id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.5 }}
+          >
+            <ListGroup.Item
+              key={task._id}
+              className="d-flex align-items-center"
+            >
+              <Form.Check
+                type="checkbox"
+                className="me-2"
+                checked={task.completed}
+                readOnly
+              />
+              {task.title}
+            </ListGroup.Item>
+          </motion.div>
         ))}
-      </ul>
-      <button onClick={() => setIsCreating(!isCreating)}>
-        {isCreating ? "Отменить создание задачи" : "Создать задачу"}
-      </button>
+      </ListGroup>
+
+      <Button
+        variant="primary"
+        className="mb-3"
+        onClick={() => setIsCreating(!isCreating)}
+      >
+        {isCreating ? "Stop Creating Task" : "Create Task"}
+      </Button>
+
       {isCreating && (
-        <div>
-          <input
+        <div className="mb-3">
+          <Form.Control
             type="text"
+            className="mb-2"
             value={newTaskTitle}
             onChange={(e) => setNewTaskTitle(e.target.value)}
-            placeholder="Введите название задачи"
+            placeholder="Write task title"
           />
-          <input
+          <Form.Check
             type="checkbox"
+            label="Completed"
+            className="mb-2"
             checked={isCompleted}
-            onChange={(e) => setIsCompleted(!isCompleted)}
+            onChange={() => setIsCompleted(!isCompleted)}
           />
-          <button onClick={handleCreateTask}>Сохранить задачу</button>
+          <Button variant="success" onClick={handleCreateTask}>
+            Save Task
+          </Button>
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 
